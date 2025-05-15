@@ -50,7 +50,7 @@ Volume: Jumlah Bitcoin yang diperdagangkan
 
 Market Cap: Total nilai pasar Bitcoin
 
-#EDA
+### EDA
 
 Plot tren harga Close dari waktu ke waktu
 
