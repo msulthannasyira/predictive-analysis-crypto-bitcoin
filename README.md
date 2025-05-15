@@ -119,10 +119,10 @@ LSTM memberikan error yang jauh lebih kecil, sehingga dipilih sebagai model terb
 
 ## 7. Struktur Laporan
 
-## Struktur Terorganisir
+### Struktur Terorganisir
 Mengikuti urutan: Domain → Business Understanding → Data Understanding → Data Preparation → Modeling → Evaluation.
 
-## Markdown & Gambar
+### Markdown & Gambar
 Penjelasan setiap tahap ditulis dalam text cell dengan markdown. Visualisasi dimasukkan dengan matplotlib/seaborn. Format readable.
 
 
