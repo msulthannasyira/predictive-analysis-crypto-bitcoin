@@ -277,6 +277,41 @@ Terdapat peningkatan akurasi dan penurunan error pada data uji, dengan nilai RMS
 - Kompleksitas model lebih tinggi daripada regresi biasa
 - Tuning hyperparameter cukup menantang
 
+## 6. Evaluasi
+Pada tahap ini, dilakukan evaluasi terhadap model Long Short-Term Memory (LSTM) yang telah dilatih untuk memprediksi harga Bitcoin berdasarkan data historis. Evaluasi dilakukan menggunakan beberapa metrik regresi yang sesuai dengan karakteristik data dan jenis problem time series forecasting (prediksi harga kontinu).
+
+### Metrik Evaluasi yang Digunakan
+Model dievaluasi menggunakan empat metrik utama yang umum pada masalah regresi:
+
+#### Mean Absolute Error (MAE)
+AE mengukur rata-rata selisih absolut antara nilai aktual dan nilai prediksi
+- Kelebihannya Mudah diinterpretasikan sehingga memberikan ukuran kesalahan dalam satuan asli
+- Kekurangannya tidak memberikan penalti lebih besar untuk kesalahan besar
+
+#### Mean Squared Error (MSE)
+MSE mengukur rata-rata selisih kuadrat antara nilai aktual dan nilai prediksi
+- Kelebihannya mmberikan penalti lebih besar terhadap kesalahan besar
+- Kekurangannya nilai MSE tidak berada pada skala asli data (karena dikuadratkan)
+
+#### R² Score (Coefficient of Determination)
+R² Score mengukur seberapa baik variabel independen menjelaskan variabel dependen. Nilai R² berkisar dari 0 sampai 1, di mana semakin dekat ke 1 menunjukkan model semakin baik.
+- Kelebihannya menggambarkan proporsi variansi yang bisa dijelaskan oleh model
+- Kekurangannya tidak selalu informatif jika target memiliki variansi rendah atau outlier tinggi
+
+### Interpretasi Hasil
+#### MAE = 3685821.68
+Rata-rata kesalahan prediksi sekitar $88, relatif kecil mengingat harga Bitcoin bisa berada di kisaran puluhan ribu USD. Ini menunjukkan akurasi yang baik.
+
+#### RMSE = 1751.40
+Menunjukkan bahwa secara umum, model membuat kesalahan sekitar $120. Masih dalam batas toleransi untuk skenario prediksi jangka pendek.
+
+#### R² Score = 0.9859
+Ini menunjukkan bahwa sekitar 96.48% variasi harga Bitcoin dapat dijelaskan oleh model LSTM, yang merupakan hasil sangat baik dan menunjukkan model mampu menangkap pola dalam data time series.
+
+
+
+
+
 
 
 
