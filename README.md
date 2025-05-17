@@ -104,76 +104,178 @@ Visualisasi ini menunjukkan tren naik turun harga Bitcoin secara historis, mempe
 
 ## 4. Data Preparation
 
-### Teknik yang digunakan
+Pada tahap ini dilakukan serangkaian proses untuk mempersiapkan data sebelum digunakan dalam pelatihan model prediksi harga Bitcoin. Teknik data preparation yang diterapkan dilakukan secara berurutan dan disesuaikan dengan karakteristik data time series serta kebutuhan dari model LSTM yang digunakan.
 
-Handling missing values (drop/forward fill)
+### Subsetting Data Historis (Pemilihan Rentang Waktu)
 
-Normalisasi dengan Min-Max Scaler
+Teknik yang digunakan yaitu Time-based subsetting dengan mengunduh dataset yang berisi data historis harga Bitcoin dari tahun 2018 hingga 2025 (dalam resolusi 1 jam). Namun, untuk fokus pada data yang paling relevan dan mencerminkan tren pasar terkini, hanya data dari 5 tahun terakhir yang digunakan. Hal ini dilakukan dengan cara mengambil data dari `last_date - 5 tahun` hingga tanggal terakhir dalam dataset.
 
-Transformasi menjadi data time series (windowing)
+```python
+last_date = df.index[-1]
+start_date = last_date - pd.DateOffset(years=5)
+df = df[df.index >= start_date]
+```
 
-Split data: train-test 80:20
+Alasan dari pemilihan rentang waktu karena data yang lebih lama cenderung kurang mencerminkan kondisi pasar saat ini dan dapat memperburuk kinerja model karena memasukkan noise atau pola yang sudah tidak relevan.
 
-Reshape data untuk input ke model LSTM
+### Pengurutan Data Berdasarkan Waktu
 
-### Alasan Teknik
+teknik yang digunakan yaitu Time index sorting dengan mengubah indeks data menjadi format tanggal kemudian diurutkan kembali berdasarkan waktu menggunakan fungsi `sort_index()`.
 
-Time series memerlukan data dalam bentuk urutan
+```python
+df = df.sort_index()
+```
 
-Normalisasi penting agar model tidak bias terhadap fitur berskala besar
+Model LSTM mempelajari pola sekuensial dalam data. Oleh karena itu, urutan waktu harus konsisten agar model dapat menangkap dependensi temporal dengan benar.
 
-Windowing agar model bisa belajar dari data historis sebelumnya
+### Normalisasi Data
+
+Teknik yang digunakan dengan Min-Max Normalization sehingga Hanya kolom `Close` (harga penutupan) yang digunakan sebagai fitur untuk pelatihan model. Nilai-nilai pada kolom ini kemudian dinormalisasi ke dalam rentang [0,1] menggunakan `MinMaxScaler` dari `sklearn`.
+
+```python
+scaler = MinMaxScaler()
+scaled_data = scaler.fit_transform(df[['Close']])
+```
+
+Model deep learning seperti LSTM sensitif terhadap skala fitur. Normalisasi diperlukan agar proses pelatihan menjadi lebih stabil, cepat konvergen, dan tidak bias terhadap nilai yang besar.
+
+### Pembuatan Window Data (Sliding Window / Time Series Framing)
+
+Teknik yang digunakan dengan Sliding window with fixed window size dimana Data time series diubah menjadi format supervised learning, yaitu `X` (input) dan `y` (target output), menggunakan teknik sliding window. Dalam hal ini, setiap input terdiri dari 1800 jam (75 hari) harga penutupan sebelumnya untuk memprediksi harga jam berikutnya.
+
+```python
+def create_dataset(data, window_size=1800):
+    X, y = [], []
+    for i in range(window_size, len(data)):
+        X.append(data[i - window_size:i, 0])
+        y.append(data[i, 0])
+    return np.array(X), np.array(y)
+
+X, y = create_dataset(scaled_data, window_size)
+```
+
+LSTM membutuhkan input dalam bentuk sekuens (urutan) agar dapat mempelajari hubungan antar waktu. Sliding window membantu memecah data menjadi pasangan input-output yang sesuai untuk pelatihan model prediktif.
+
+### Transformasi Bentuk Data untuk LSTM
+
+Teknik yang digunakan yaitu Reshaping to 3D structurem dimana LSTM memerlukan data input dalam bentuk tiga dimensi yaitu `[samples, timesteps, features]`. Oleh karena itu, array X diubah bentuknya menggunakan `reshape()`.
+
+```python
+X = X.reshape((X.shape[0], X.shape[1], 1))
+```
+
+Struktur ini diperlukan agar setiap contoh input terdiri dari `timesteps` urutan waktu, masing-masing dengan satu fitur, sesuai dengan spesifikasi arsitektur LSTM.
+
+### Pembagian Data untuk Pelatihan dan Pengujian
+
+Teknik yang digunakan yaitu Train-Test Split (80:20 ratio) dengna membagi Dataset menjadi dua bagian, 80% untuk pelatihan (`X_train, y_train`) dan 20% untuk pengujian (`X_test, y_test`).
+
+```python
+split = int(0.8 * len(X))
+X_train, X_test = X[:split], X[split:]
+y_train, y_test = y[:split], y[split:]
+```
+
+Pembagian ini diperlukan untuk melatih model pada sebagian besar data dan menguji performanya pada data yang belum pernah dilihat sebelumnya, sehingga dapat mengukur kemampuan generalisasi model.
 
 ## 5. Modelling
 
-### Model Baseline
+Pada tahap ini dilakukan proses pembuatan dan pelatihan model machine learning untuk menyelesaikan permasalahan prediksi harga Bitcoin berdasarkan data historis harga penutupan. Model yang digunakan adalah Long Short-Term Memory (LSTM), yang merupakan jenis jaringan saraf tiruan berjenis Recurrent Neural Network (RNN) yang sangat cocok digunakan untuk memproses data deret waktu (time series).
 
-Linear Regression menggunakan Open, High, Low, Volume sebagai fitur
+### Pemilihan Model: Long Short-Term Memory (LSTM)
 
-### Model LSTM
+LSTM dipilih karena kemampuannya dalam mengingat informasi jangka panjang serta menangani masalah vanishing gradient yang umum pada RNN biasa. Model ini dapat mengenali pola dalam data sekuensial, seperti harga pasar, yang sering memiliki korelasi antar waktu.
 
-2 LSTM layers, dropout, dan dense output layer
+### Arsitektur Model
 
-Optimizer: Adam
+Model dibangun menggunakan Keras dengan TensorFlow backend. Berikut adalah arsitektur model awal yang digunakan:
 
-Loss function: MSE
+```python
+model = Sequential()
+model.add(LSTM(units=64, return_sequences=True, input_shape=(X_train.shape[1], 1)))
+model.add(Dropout(0.2))
+model.add(LSTM(units=64, return_sequences=False))
+model.add(Dropout(0.2))
+model.add(Dense(1))
+```
+Penjelasan tahapan dan parameter:
 
-### Pemilihan Model Terbaik
+- `LSTM Layer (64 units)` adalah jumlah neuron di layer LSTM. Lapisan ini menangkap hubungan temporal dalam data.
 
-Model LSTM dipilih karena mampu menangkap pola waktu (temporal pattern) dengan lebih baik
+- `return_sequences=True` dapat mengembalikan seluruh output sequence ke layer berikutnya. Diperlukan karena ada dua layer LSTM bertingkat.
 
-Performa dibandingkan menggunakan RMSE dan MAE
+- `Dropout (0.2)` yaitu teknik regularisasi untuk mengurangi overfitting dengan mengabaikan 20% neuron secara acak selama pelatihan.
 
-Hyperparameter tuning dilakukan pada jumlah neuron dan window size
+- `Dense(1)` adalah layer keluaran dengan satu neuron untuk memprediksi harga penutupan berikutnya.
 
-## 6. Evaluation
+Kompilasi dan Pelatihan Model:
 
-### Metrik Evaluasi
+```python
+model.compile(optimizer='adam', loss='mean_squared_error')
+early_stop = EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)
 
-MSE (Mean Squared Error): Mengukur rata-rata error kuadrat
+history = model.fit(X_train, y_train, epochs=50, batch_size=64, validation_data=(X_test, y_test), callbacks=[early_stop])
+```
+- Optimizer: `adam` Optimizer adaptif yang umum digunakan untuk deep learning.
 
-RMSE (Root Mean Squared Error): Akar dari MSE, lebih mudah diinterpretasikan karena satuannya sama dengan harga
+- Loss: `mean_squared_error` cocok untuk regresi karena menghitung kesalahan rata-rata kuadrat antara prediksi dan target.
 
-### Hasil Evaluasi
+- Epochs: 50 Jumlah maksimum pelatihan iterasi.
 
-Linear Regression: RMSE = 4500
+- Batch size: 64 Jumlah data dalam satu iterasi training.
 
-LSTM: RMSE = 1500
-LSTM memberikan error yang jauh lebih kecil, sehingga dipilih sebagai model terbaik.
+- EarlyStopping: Menghentikan pelatihan jika val_loss tidak membaik dalam 5 epoch berturut-turut.
 
-## 7. Struktur Laporan
+### Arsitektur Model
 
-### Struktur Terorganisir
-Mengikuti urutan: Domain → Business Understanding → Data Understanding → Data Preparation → Modeling → Evaluation.
+Model dievaluasi menggunakan metrik:
 
-### Markdown & Gambar
-Penjelasan setiap tahap ditulis dalam text cell dengan markdown. Visualisasi dimasukkan dengan matplotlib/seaborn. Format readable.
+- Mean Absolute Error (MAE)
 
+- Mean Squared Error (MSE)
 
+- Root Mean Squared Error (RMSE)
 
+- R² Score
 
+Hasil evaluasi menunjukkan performa prediksi cukup baik, berikut adalah detailnya:
 
+- Neuron LSTM dari 64 menjadi 128
+- Dropout Rate dari 0.2 menjadi 0.3
+- Batch Size dari 64 menjadi 32
+- Optimizer dari Adam diubah menjadi RMSprop
 
+Model baru:
+
+```python
+model = Sequential()
+model.add(LSTM(128, return_sequences=True, input_shape=(X_train.shape[1], 1)))
+model.add(Dropout(0.3))
+model.add(LSTM(128, return_sequences=False))
+model.add(Dropout(0.3))
+model.add(Dense(1))
+
+optimizer = tf.keras.optimizers.RMSprop(learning_rate=0.0005)
+model.compile(optimizer=optimizer, loss='mean_squared_error')
+```
+
+Terdapat peningkatan akurasi dan penurunan error pada data uji, dengan nilai RMSE dan MAE yang lebih rendah dibanding model awal.
+
+### Kelebihan dan Kekurangan Algoritma LSTM
+
+#### kelebihan
+
+- Mampu mempelajari pola jangka panjang dalam data
+- Cocok untuk data time series
+- Menangani vanishing gradient lebih baik dari RNN
+- Akurat untuk data yang memiliki pola musiman/trend
+
+#### kekurangan
+
+- Butuh waktu pelatihan lebih lama
+- Memerlukan banyak data agar model efektif
+- Kompleksitas model lebih tinggi daripada regresi biasa
+- Tuning hyperparameter cukup menantang
 
 
 
