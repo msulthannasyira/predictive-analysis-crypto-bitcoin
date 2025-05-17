@@ -4,10 +4,14 @@ Analisis prediksi harga kripto bitcoin di masa depan
 ## 1. Domain Proyek
 ### Latar belakang
 
-Dalam beberapa tahun terakhir, Bitcoin telah menjadi salah satu instrumen investasi dan spekulasi yang paling populer. Pergerakan harganya yang sangat fluktuatif sering kali membuat investor kesulitan dalam memprediksi arah tren di masa depan. Karena tingkat volatilitas yang tinggi ini, banyak orang mulai melirik pendekatan komputasi salah satunya Machine Learning sebagai cara untuk memprediksi harga Bitcoin, sebagai alternatif atau tambahan referensi dari metode analisis teknikal atau fundamental yang biasa digunakan.
+Beberapa tahun terakhir, Bitcoin telah menjadi salah satu aset digital yang paling banyak diperbincangkan di dunia. Sebagai mata uang kripto pertama, Bitcoin tidak hanya dikenal sebagai alat tukar digital, tetapi juga telah berkembang menjadi instrumen investasi yang menarik perhatian banyak orang—mulai dari investor individu hingga lembaga keuangan besar. Namun, satu hal yang menjadi ciri khas Bitcoin adalah harganya yang sangat fluktuatif dan sulit diprediksi.
 
-### Mengapa masalah ini penting?
-Masalah ini penting karena prediksi harga Bitcoin yang akurat bisa membantu investor membuat keputusan yang lebih tepat. Dengan begitu, mereka bisa meminimalkan risiko kerugian besar dan menjalankan aktivitas jual beli aset kripto dengan lebih efisien.
+Fluktuasi harga Bitcoin ini dipengaruhi oleh berbagai faktor, seperti sentimen pasar, regulasi pemerintah, teknologi blockchain yang terus berkembang, hingga isu-isu ekonomi global. Ketidakpastian ini tentu menjadi tantangan bagi para investor dan trader dalam mengambil keputusan yang tepat. Di sinilah peran teknologi, khususnya Machine Learning, menjadi sangat penting. Pendekatan ini mampu menganalisis data historis dan menemukan pola-pola tersembunyi yang mungkin luput dari metode analisis tradisional seperti analisis teknikal maupun fundamental.
+
+### Mengapa Masalah Ini Penting dan Bagaimana Cara Menyelesaikannya
+Masalah prediksi harga Bitcoin sangat relevan karena menyangkut keputusan finansial yang berisiko tinggi. Jika prediksi harga bisa dilakukan dengan lebih akurat, para investor bisa lebih percaya diri dalam membuat keputusan kapan harus membeli, menjual, atau menahan aset. Ini tidak hanya membantu mengurangi risiko kerugian, tapi juga meningkatkan efisiensi dan efektivitas dalam aktivitas jual beli aset kripto.
+
+Melalui proyek ini, pendekatan Machine Learning digunakan untuk membangun model prediksi harga Bitcoin berdasarkan data historis, volume transaksi, dan indikator teknikal lainnya. Harapannya, model ini bisa menjadi alat bantu yang dapat memberikan prediksi harga jangka pendek atau menengah dengan tingkat akurasi yang lebih baik, sehingga memberikan gambaran tren yang lebih jelas bagi pengguna.
 
 ### Referensi
 Beberapa studi telah dilakukan, seperti:
@@ -21,7 +25,7 @@ https://www.investopedia.com/terms/b/bitcoin.asp
 Harga Bitcoin sangat fluktuatif dan sulit diprediksi jika hanya mengandalkan metode tradisional. Karena itu, dibutuhkan pendekatan lain yang lebih adaptif, seperti pemanfaatan machine learning, untuk membantu memprediksi pergerakan harganya secara lebih akurat.
 
 ### Goal
-Tujuan dari proyek ini adalah membangun model Machine Learning yang mampu memprediksi harga Bitcoin untuk hari berikutnya dengan akurat.
+Tujuan dari proyek ini adalah membangun model Machine Learning yang mampu memprediksi harga Bitcoin untuk hari berikutnya dengan akurat. Metode ini bukan merupakan metode mutlak tetapi menjadi salah satu opsi 
 
 ### Solution Statement
 Solusi yang ditawarkan adalah mengembangkan model LSTM (Long Short-Term Memory) yang memanfaatkan data historis harga Bitcoin untuk mengenali pola-pola dari waktu ke waktu.
