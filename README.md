@@ -23,7 +23,7 @@ Melalui proyek ini, pendekatan Machine Learning digunakan untuk membangun model 
 ### Referensi
 McNally, S., Roche, J., & Caton, S. (2018). Predicting the Price of Bitcoin Using Machine Learning. 26th Euromicro International Conference on Parallel, Distributed and Network-based Processing (PDP). DOI: 10.1109/PDP2018.20180200044, penelitian ini membahas penggunaan RNN dan LSTM dalam memprediksi harga Bitcoin menggunakan data historis.
 
-Investopedia. (n.d.). Bitcoin. Diakses dari: https://www.investopedia.com/terms/b/bitcoin.asp, laman ini enjelaskan secara lengkap apa itu Bitcoin, bagaimana cara kerjanya, dan apa saja yang memengaruhi nilainya.
+Investopedia. (n.d.). Bitcoin. Diakses dari: https://www.investopedia.com/terms/b/bitcoin.asp, laman ini menjelaskan secara lengkap apa itu Bitcoin, bagaimana cara kerjanya, dan apa saja yang memengaruhi nilainya.
 
 ## 2. Business Understanding
 
