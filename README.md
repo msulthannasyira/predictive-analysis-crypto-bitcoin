@@ -180,7 +180,7 @@ Pembagian ini diperlukan untuk melatih model pada sebagian besar data dan menguj
 
 ## 5. Modelling
 
-Pada tahap ini dilakukan proses pembuatan dan pelatihan model machine learning untuk menyelesaikan permasalahan prediksi harga Bitcoin berdasarkan data historis harga penutupan. Model yang digunakan adalah Long Short-Term Memory (LSTM), yang merupakan jenis jaringan saraf tiruan berjenis Recurrent Neural Network (RNN) yang sangat cocok digunakan untuk memproses data deret waktu (time series).
+Pada tahap ini, kita mulai membuat dan melatih model machine learning untuk memprediksi harga Bitcoin berdasarkan data historis, khususnya data harga penutupan. Model yang digunakan adalah Long Short-Term Memory (LSTM), yaitu salah satu jenis jaringan saraf tiruan yang dirancang khusus untuk memahami pola dalam data deret waktu (time series). LSTM sangat cocok digunakan dalam kasus seperti ini karena mampu mengingat pola data dari waktu ke waktu, sehingga dapat membantu memprediksi pergerakan harga di masa depan dengan lebih akurat.
 
 ### Pemilihan Model: Long Short-Term Memory (LSTM)
 
