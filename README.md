@@ -1,6 +1,13 @@
 # predictive-analysis-crypto-bitcoin
 Analisis prediksi harga kripto bitcoin di masa depan
 
+- Nama Lengkap: Muhammad Sulthan Nasyira
+- Alur Belajar: Machine Learning Engineer
+- Cohort ID: MC589D5Y2486
+- Coding Camp Email Username:   mc589d5y2486@student.devacademy.id
+- Email Terdaftar:   sulthanasyirah@gmail.com
+- Group Belajar:   MC-49
+
 ## 1. Domain Proyek
 ### Latar belakang
 
