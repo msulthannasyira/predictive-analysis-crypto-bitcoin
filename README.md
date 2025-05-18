@@ -104,7 +104,7 @@ Visualisasi ini menunjukkan tren naik turun harga Bitcoin secara historis, mempe
 
 ## 4. Data Preparation
 
-Pada tahap ini dilakukan serangkaian proses untuk mempersiapkan data sebelum digunakan dalam pelatihan model prediksi harga Bitcoin. Teknik data preparation yang diterapkan dilakukan secara berurutan dan disesuaikan dengan karakteristik data time series serta kebutuhan dari model LSTM yang digunakan.
+Pada tahap ini, dilakukan berbagai langkah untuk mempersiapkan data agar siap digunakan dalam pelatihan model prediksi harga Bitcoin. Proses ini disebut data preparation, dan dilakukan secara bertahap serta disesuaikan dengan karakteristik data time series yang digunakan. Karena model yang dipakai adalah LSTM, maka data perlu disusun dengan cara tertentu agar bisa "dipahami" oleh model. Dengan kata lain, kita memastikan data memiliki format dan struktur yang tepat, sehingga model bisa belajar pola dari pergerakan harga Bitcoin secara akurat.
 
 ### Subsetting Data Historis (Pemilihan Rentang Waktu)
 
