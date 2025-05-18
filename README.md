@@ -278,7 +278,7 @@ Terdapat peningkatan akurasi dan penurunan error pada data uji, dengan nilai RMS
 - Tuning hyperparameter cukup menantang
 
 ## 6. Evaluasi
-Pada tahap ini, dilakukan evaluasi terhadap model Long Short-Term Memory (LSTM) yang telah dilatih untuk memprediksi harga Bitcoin berdasarkan data historis. Evaluasi dilakukan menggunakan beberapa metrik regresi yang sesuai dengan karakteristik data dan jenis problem time series forecasting (prediksi harga kontinu).
+Pada tahap ini, model LSTM yang sudah dilatih dievaluasi untuk melihat seberapa baik kemampuannya dalam memprediksi harga Bitcoin berdasarkan data historis. Evaluasi ini dilakukan dengan menggunakan beberapa metrik regresi yang memang cocok untuk jenis data deret waktu dan masalah prediksi nilai kontinu seperti harga. Tujuannya adalah untuk mengetahui apakah model sudah cukup akurat atau masih perlu diperbaiki agar hasil prediksinya bisa lebih mendekati kenyataan.
 
 ### Metrik Evaluasi yang Digunakan
 Model dievaluasi menggunakan empat metrik utama yang umum pada masalah regresi:
