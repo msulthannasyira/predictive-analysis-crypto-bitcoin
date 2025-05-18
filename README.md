@@ -299,14 +299,14 @@ R² Score mengukur seberapa baik variabel independen menjelaskan variabel depend
 - Kekurangannya tidak selalu informatif jika target memiliki variansi rendah atau outlier tinggi
 
 ### Interpretasi Hasil
-#### MAE = 3685821.68
+#### MAE = 3,325,259.55
 Rata-rata kesalahan prediksi sekitar $88, relatif kecil mengingat harga Bitcoin bisa berada di kisaran puluhan ribu USD. Ini menunjukkan akurasi yang baik.
 
-#### RMSE = 1751.40
-Menunjukkan bahwa secara umum, model membuat kesalahan sekitar $120. Masih dalam batas toleransi untuk skenario prediksi jangka pendek.
+#### RMSE = 1,695.01
+Ini berarti rata-rata kesalahan prediksi model adalah sekitar $1,695. Nilai ini relatif kecil jika dibandingkan dengan harga Bitcoin yang bisa berkisar antara $20.000 hingga $60.000, sehingga menunjukkan bahwa model memiliki performa yang cukup baik dalam menghasilkan prediksi yang mendekati nilai aktual.
 
-#### R² Score = 0.9859
-Ini menunjukkan bahwa sekitar 96.48% variasi harga Bitcoin dapat dijelaskan oleh model LSTM, yang merupakan hasil sangat baik dan menunjukkan model mampu menangkap pola dalam data time series.
+#### R² Score =  0.9874
+Nilai ini menunjukkan bahwa sekitar 98.74% variasi harga Bitcoin dalam data historis dapat dijelaskan oleh model LSTM. Ini adalah indikasi kuat bahwa model mampu mengenali dan mempelajari pola dari data time series dengan sangat baik, dan performanya sudah sangat memadai untuk keperluan prediksi jangka pendek.
 
 
 
