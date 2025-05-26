@@ -46,7 +46,7 @@ plt.xlabel('Tanggal')
 plt.ylabel('Harga')
 plt.show()
 
-# === 3. Normalisasi Data ===
+# Normalisasi Data
 scaler = MinMaxScaler()
 scaled_data = scaler.fit_transform(df[['Close']])
 
