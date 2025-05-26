@@ -201,8 +201,6 @@ window_size = 1800
 X, y = create_dataset(scaled_data, window_size)
 ```
 
-Alasan pemilihan window_size = 1800:
-
 - Nilai ini ditentukan secara heuristik berdasarkan asumsi bahwa 75 hari adalah periode yang cukup untuk model menangkap pola jangka menengah.
 - Belum dilakukan hyperparameter tuning pada tahap ini, namun parameter ini dapat diuji dalam eksperimen selanjutnya untuk mencari nilai optimal.
 
@@ -220,15 +218,18 @@ X = X.reshape((X.shape[0], X.shape[1], 1))
 
 Data dibagi menjadi dua bagian tanpa dilakukan shuffling:
 
-- 80% untuk pelatihan (X_train, y_train)
-- 20% untuk pengujian (X_test, y_test)
+- 80% untuk pelatihan (`X_train`, `y_train`)
+- 20% untuk pengujian (`X_test`, `y_test`)
 
 ```python
 split = int(0.8 * len(X))
 X_train, X_test = X[:split], X[split:]
 y_train, y_test = y[:split], y[split:]
 ```
-Tujuan pembagian ini untuk memastikan bahwa model diuji pada data yang tidak pernah dilihat sebelumnya, sehingga dapat dievaluasi kemampuan generalisasinya.
+
+- Rasio ini merupakan praktik umum dalam machine learning.
+- Untuk time series, shuffling tidak dilakukan agar urutan waktu tetap terjaga.
+- Pembagian ini memisahkan data lama (untuk pelatihan) dan data baru (untuk pengujian), yang mencerminkan situasi nyata dalam prediksi.
 
 ## 5. Modelling
 
