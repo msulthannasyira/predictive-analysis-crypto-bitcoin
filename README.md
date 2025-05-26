@@ -237,98 +237,78 @@ Pada tahap ini, kita mulai membuat dan melatih model machine learning untuk memp
 
 ### Pemilihan Model: Long Short-Term Memory (LSTM)
 
-LSTM dipilih karena kemampuannya dalam mengingat informasi jangka panjang serta menangani masalah vanishing gradient yang umum pada RNN biasa. Model ini dapat mengenali pola dalam data sekuensial, seperti harga pasar, yang sering memiliki korelasi antar waktu.
+LSTM unggul dalam mengenali pola dalam data time series karena memiliki mekanisme gating yang mengatur informasi mana yang disimpan dan dilupakan. Hal ini membuat LSTM lebih tahan terhadap masalah vanishing gradient yang umum pada RNN biasa, dan lebih akurat dalam mengenali tren harga yang muncul dari waktu ke waktu.
 
 ### Arsitektur Model
-
-Model dibangun menggunakan Keras dengan TensorFlow backend. Berikut adalah arsitektur model awal yang digunakan:
+Model dibangun menggunakan Keras dengan TensorFlow sebagai backend. Arsitektur model yang digunakan terdiri dari dua lapisan LSTM dan satu lapisan Dense output:
 
 ```python
 model = Sequential()
-model.add(LSTM(units=64, return_sequences=True, input_shape=(X_train.shape[1], 1)))
-model.add(Dropout(0.2))
-model.add(LSTM(units=64, return_sequences=False))
-model.add(Dropout(0.2))
+model.add(LSTM(50, return_sequences=True, input_shape=(window_size, 1)))
+model.add(LSTM(50))
 model.add(Dense(1))
+model.compile(optimizer='adam', loss='mean_squared_error')
 ```
 Penjelasan tahapan dan parameter:
 
-- `LSTM Layer (64 units)` adalah jumlah neuron di layer LSTM. Lapisan ini menangkap hubungan temporal dalam data.
+- `LSTM(50, return_sequences=True)`: Lapisan LSTM pertama dengan 50 unit, dan mengembalikan output sequence penuh ke lapisan berikutnya
+- `LSTM(50)`: Lapisan LSTM kedua dengan 50 unit yang hanya mengembalikan output terakhir
+- `Dense(1)`: Layer output dengan satu neuron untuk memprediksi harga penutupan
+- `optimizer='adam'`: Optimizer Adam digunakan karena adaptif dan umum untuk pelatihan deep learning
+- `loss='mean_squared_error'`: Fungsi loss MSE cocok untuk regresi karena menghitung rata-rata kuadrat dari kesalahan prediksi.
 
-- `return_sequences=True` dapat mengembalikan seluruh output sequence ke layer berikutnya. Diperlukan karena ada dua layer LSTM bertingkat.
-
-- `Dropout (0.2)` yaitu teknik regularisasi untuk mengurangi overfitting dengan mengabaikan 20% neuron secara acak selama pelatihan.
-
-- `Dense(1)` adalah layer keluaran dengan satu neuron untuk memprediksi harga penutupan berikutnya.
-
-Kompilasi dan Pelatihan Model:
+Model dilatih dengan parameter:
 
 ```python
-model.compile(optimizer='adam', loss='mean_squared_error')
-early_stop = EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)
-
-history = model.fit(X_train, y_train, epochs=50, batch_size=64, validation_data=(X_test, y_test), callbacks=[early_stop])
+model.fit(X_train, y_train, epochs=10, batch_size=32, verbose=1)
 ```
-- Optimizer: `adam` Optimizer adaptif yang umum digunakan untuk deep learning.
+- `Epochs: 10` jumlah iterasi pelatihan
+- `Batch Size: 32` jumlah sampel yang digunakan dalam satu iterasi update bobot.
 
-- Loss: `mean_squared_error` cocok untuk regresi karena menghitung kesalahan rata-rata kuadrat antara prediksi dan target.
-
-- Epochs: 50 Jumlah maksimum pelatihan iterasi.
-
-- Batch size: 64 Jumlah data dalam satu iterasi training.
-
-- EarlyStopping: Menghentikan pelatihan jika val_loss tidak membaik dalam 5 epoch berturut-turut.
-
-### Arsitektur Model
-
-Model dievaluasi menggunakan metrik:
-
-- Mean Absolute Error (MAE)
-
-- Mean Squared Error (MSE)
-
-- Root Mean Squared Error (RMSE)
-
-- R² Score
-
-Hasil evaluasi menunjukkan performa prediksi cukup baik, berikut adalah detailnya:
-
-- Neuron LSTM dari 64 menjadi 128
-- Dropout Rate dari 0.2 menjadi 0.3
-- Batch Size dari 64 menjadi 32
-- Optimizer dari Adam diubah menjadi RMSprop
-
-Model baru:
-
+### Evaluasi Model
+Setelah pelatihan, model dievaluasi menggunakan data uji. Hasil prediksi dibandingkan dengan nilai aktual, kemudian diukur menggunakan beberapa metrik evaluasi regresi.
 ```python
-model = Sequential()
-model.add(LSTM(128, return_sequences=True, input_shape=(X_train.shape[1], 1)))
-model.add(Dropout(0.3))
-model.add(LSTM(128, return_sequences=False))
-model.add(Dropout(0.3))
-model.add(Dense(1))
-
-optimizer = tf.keras.optimizers.RMSprop(learning_rate=0.0005)
-model.compile(optimizer=optimizer, loss='mean_squared_error')
+y_pred = model.predict(X_test)
+y_pred_inv = scaler.inverse_transform(y_pred.reshape(-1, 1))
+y_test_inv = scaler.inverse_transform(y_test.reshape(-1, 1))
 ```
 
-Terdapat peningkatan akurasi dan penurunan error pada data uji, dengan nilai RMSE dan MAE yang lebih rendah dibanding model awal.
+Visualisasi hasil:
+```python
+plt.figure(figsize=(10, 5))
+plt.plot(y_test_inv, label='Actual')
+plt.plot(y_pred_inv, label='Predicted')
+plt.title('Prediksi Harga Bitcoin (Data Uji)')
+plt.xlabel('Waktu')
+plt.ylabel('Harga')
+plt.legend()
+plt.show()
+```
 
-### Kelebihan dan Kekurangan Algoritma LSTM
+Evaluasi metrik:
+```python
+mse = mean_squared_error(y_test_inv, y_pred_inv)
+mae = mean_absolute_error(y_test_inv, y_pred_inv)
+r2 = r2_score(y_test_inv, y_pred_inv)
+```
 
-#### kelebihan
+Hasil evaluasi:
+- MSE (Mean Squared Error): Mengukur rata-rata kesalahan kuadrat antara nilai aktual dan prediksi.
+- MAE (Mean Absolute Error): Rata-rata selisih absolut antara nilai aktual dan prediksi.
+- R² Score: Mengukur seberapa baik model menjelaskan variasi dalam data. Nilai mendekati 1 menandakan model yang baik.
 
-- Mampu mempelajari pola jangka panjang dalam data
-- Cocok untuk data time series
-- Menangani vanishing gradient lebih baik dari RNN
-- Akurat untuk data yang memiliki pola musiman/trend
+### Kelebihan dan Kekurangan LSTM
+Kelebihan:
+- Mampu mengenali pola jangka panjang dalam data sekuensial.
+- Efektif dalam memodelkan data time series seperti harga pasar.
+- Mengatasi masalah vanishing gradient pada RNN biasa.
+- Cocok untuk memprediksi data dengan tren dan pola musiman.
 
-#### kekurangan
-
-- Butuh waktu pelatihan lebih lama
-- Memerlukan banyak data agar model efektif
-- Kompleksitas model lebih tinggi daripada regresi biasa
-- Tuning hyperparameter cukup menantang
+Kekurangan:
+- Proses pelatihan lebih lambat dibanding model konvensional seperti regresi linier.
+- Membutuhkan banyak data agar generalisasi model baik.
+- Lebih kompleks dan membutuhkan tuning parameter seperti jumlah unit, batch size, dan epochs.
+- Tidak selalu lebih baik dari model sederhana jika data tidak memiliki pola kompleks.
 
 ## 6. Evaluasi
 Pada tahap ini, model LSTM yang sudah dilatih dievaluasi untuk melihat seberapa baik kemampuannya dalam memprediksi harga Bitcoin berdasarkan data historis. Evaluasi ini dilakukan dengan menggunakan beberapa metrik regresi yang memang cocok untuk jenis data deret waktu dan masalah prediksi nilai kontinu seperti harga. Tujuannya adalah untuk mengetahui apakah model sudah cukup akurat atau masih perlu diperbaiki agar hasil prediksinya bisa lebih mendekati kenyataan.
@@ -352,14 +332,29 @@ R² Score mengukur seberapa baik variabel independen menjelaskan variabel depend
 - Kekurangannya tidak selalu informatif jika target memiliki variansi rendah atau outlier tinggi
 
 ### Interpretasi Hasil
-#### MAE = 3,325,259.55
-Rata-rata kesalahan prediksi sekitar $88, relatif kecil mengingat harga Bitcoin bisa berada di kisaran puluhan ribu USD. Ini menunjukkan akurasi yang baik.
+### MSE = 300,644.00
+Mean Squared Error (MSE) menunjukkan rata-rata kuadrat dari kesalahan prediksi. Nilai 300,644 ini tergolong sangat kecil jika dibandingkan dengan harga Bitcoin yang bisa mencapai puluhan ribu hingga ratusan ribu USD. Nilai MSE yang rendah menunjukkan bahwa model mampu meminimalkan kesalahan prediksi secara efektif.
 
-#### RMSE = 1,695.01
-Ini berarti rata-rata kesalahan prediksi model adalah sekitar $1,695. Nilai ini relatif kecil jika dibandingkan dengan harga Bitcoin yang bisa berkisar antara $20.000 hingga $60.000, sehingga menunjukkan bahwa model memiliki performa yang cukup baik dalam menghasilkan prediksi yang mendekati nilai aktual.
+### MAE = 388.28
+Rata-rata kesalahan prediksi model sekitar $388, yang relatif sangat kecil jika dibandingkan dengan harga Bitcoin yang biasanya berada dalam kisaran puluhan ribu USD. Ini menunjukkan model LSTM memiliki akurasi yang sangat baik dalam memprediksi harga Bitcoin berdasarkan data historis.
 
-#### R² Score =  0.9874
-Nilai ini menunjukkan bahwa sekitar 98.74% variasi harga Bitcoin dalam data historis dapat dijelaskan oleh model LSTM. Ini adalah indikasi kuat bahwa model mampu mengenali dan mempelajari pola dari data time series dengan sangat baik, dan performanya sudah sangat memadai untuk keperluan prediksi jangka pendek.
+### R² Score = 0.9988
+Nilai R² mendekati 1 (0.9988) menunjukkan bahwa 99.88% variasi dalam data harga Bitcoin dapat dijelaskan oleh model LSTM. Ini merupakan hasil yang sangat baik dan menunjukkan model mampu menangkap pola-pola penting dalam data historis, serta memiliki performa yang sangat andal untuk keperluan prediksi harga Bitcoin.
+
+Domain proyek menyoroti pentingnya memanfaatkan Machine Learning dalam menangani volatilitas harga Bitcoin yang tinggi dan sulit diprediksi. Dengan hasil evaluasi di atas:
+- Model LSTM terbukti efektif dalam memahami pola historis harga Bitcoin
+- Kesalahan prediksi yang sangat kecil dan nilai R² yang mendekati 1 menunjukkan bahwa model mampu memberikan prediksi yang sangat mendekati kenyataan
+- Hal ini sejalan dengan tujuan utama domain proyek, yaitu menggunakan teknologi Machine Learning untuk memetakan pola harga yang sulit ditangkap oleh metode tradisional.
+
+### Kesimpulan
+
+Volatilitas tinggi dan ketidakpastian harga Bitcoin menyebabkan kesulitan dalam pengambilan keputusan. Model prediktif yang dibangun terbukti dapat memberikan estimasi harga yang stabil dan akurat, membantu mengurangi ketidakpastian tersebut.
+
+Tujuan membangun model yang dapat memprediksi harga jangka pendek dengan akurat telah dicapai:
+- Visualisasi tren yang konsisten dan realistis
+- Metrik evaluasi menunjukkan performa yang sangat baik
+
+Solusi utama berupa penggunaan algoritma LSTM untuk prediksi time series terbukti efektif. Model tidak hanya memberikan prediksi numerik, tetapi juga visualisasi tren yang membantu pengambilan keputusan. Dampaknya sangat relevan bagi investor, trader, maupun analis.
 
 
 
